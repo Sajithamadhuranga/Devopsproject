@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
-import './signup.css';
+import './Login.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { API_URL } from "./api";  // correct relative path
-import bgImage from "./assets/bg2.jpg"; // <-- import the image correctly
+import { API_URL } from "../../api";
+import bgImage from "../../assets/bg2.jpg";
 
-const Signup = () => {
+const Login = () => {
   const [form, setForm] = useState({
-    name: '',
     email: '',
     password: ''
   });
-  const navigate = useNavigate(); // React Router navigation
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.id]: e.target.value });
@@ -20,9 +19,9 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${API_URL}/signup`, form);
-      alert(res.data.msg); // show success message
-      navigate('/'); // Navigate to home page after signup
+      const res = await axios.post(`${API_URL}/login`, form);
+      localStorage.setItem('token', res.data.token);
+      navigate('/'); // Redirect after login
     } catch (err) {
       alert(err.response?.data?.msg || 'Something went wrong');
     }
@@ -31,26 +30,11 @@ const Signup = () => {
   return (
     <div
       className="auth-container"
-      style={{
-        backgroundImage: `url(${bgImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        minHeight: '100vh',
-      }}
+      style={{ backgroundImage: `url(${bgImage})` }} // ✅ use imported image
     >
       <div className="form-box">
-        <h2>Sign Up</h2>
+        <h2>Login</h2>
         <form onSubmit={handleSubmit}>
-          <label htmlFor="name">Name</label>
-          <input
-            type="text"
-            id="name"
-            placeholder="Enter your name"
-            value={form.name}
-            onChange={handleChange}
-            required
-          />
-
           <label htmlFor="email">E-Mail</label>
           <input
             type="email"
@@ -71,11 +55,11 @@ const Signup = () => {
             required
           />
 
-          <button type="submit">Sign Up</button>
+          <button type="submit">Login</button>
         </form>
       </div>
     </div>
   );
 };
 
-export default Signup;
+export default Login;

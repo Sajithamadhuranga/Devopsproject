@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
-import Navbar from "./components/Navbar.jsx";
+import Navbar from "../Navbar/Navbar.jsx";
 
 
-import bgImage from "./assets/bg.png";
+import bgImage from "../../assets/bg.png";
 
 const Home = () => {
   return (

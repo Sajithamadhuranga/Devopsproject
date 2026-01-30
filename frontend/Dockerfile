@@ -6,6 +6,10 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
+ARG VITE_API_URL=/api
+ENV VITE_API_URL=${VITE_API_URL}
+
+# Build the Vite app. Vite will pick up `VITE_API_URL` from process.env during build.
 RUN npm run build
 
 FROM nginx:stable-alpine
