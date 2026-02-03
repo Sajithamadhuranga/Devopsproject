@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDS = 'dockerhub-creds'
-        DOCKERHUB_USER = 'sajithamaduranga2001@gmail.com'
+        DOCKERHUB_USER = 'sajithamaduranga'
         FRONTEND_IMAGE = "${DOCKERHUB_USER}/devops_frontend_image:latest"
         BACKEND_IMAGE  = "${DOCKERHUB_USER}/devops_backend_image:latest"
         
