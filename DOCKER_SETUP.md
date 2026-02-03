@@ -78,10 +78,10 @@ docker-project-frontend-1   Up      0.0.0.0:80->80/tcp
 
 ## Access the Application
 
-- **Frontend**: http://localhost
-- **Backend API**: http://localhost:4000/api
-- **Health Check**: http://localhost:4000/health
-- **MongoDB**: localhost:27017 (from host machine)
+- **Frontend**: http://65.0.29.12
+- **Backend API**: http://65.0.29.12:4000/api
+- **Health Check**: http://65.0.29.12:4000/health
+- **MongoDB**: 65.0.29.12:27017 (from host machine)
 
 ## Key Updates Made
 
@@ -189,7 +189,7 @@ MONGODB_URI=mongodb://admin:password@mongo:27017/docker-project?authSource=admin
 PORT=4000
 NODE_ENV=production
 JWT_SECRET=your-secret-key-change-in-production
-CORS_ORIGIN=http://localhost,http://localhost:80,http://localhost:5173
+CORS_ORIGIN=http://65.0.29.12,http://65.0.29.12:80,http://65.0.29.12:5173
 ```
 
 ### Frontend (docker-compose.yml)

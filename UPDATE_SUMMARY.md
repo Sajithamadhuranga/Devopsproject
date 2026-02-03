@@ -122,9 +122,9 @@ docker-compose up -d
 ```
 
 ### Access Services
-- Frontend: http://localhost
-- Backend: http://localhost:4000
-- Health Check: http://localhost:4000/health
+- Frontend: http://65.0.29.12
+- Backend: http://65.0.29.12:4000
+- Health Check: http://65.0.29.12:4000/health
 
 ### View Logs
 ```bash
@@ -140,8 +140,8 @@ docker-compose down
 
 1. Start services: `docker-compose up -d`
 2. Verify all services: `docker-compose ps`
-3. Test backend health: `curl http://localhost:4000/health`
-4. Open frontend: http://localhost in browser
+3. Test backend health: `curl http://65.0.29.12:4000/health`
+4. Open frontend: http://65.0.29.12 in browser
 5. Check browser console for any API errors
 6. View logs: `docker-compose logs -f`
 

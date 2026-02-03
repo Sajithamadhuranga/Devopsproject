@@ -1,0 +1,4 @@
+terraform-root-learning/
+node_modules/
+.env
+dist/
