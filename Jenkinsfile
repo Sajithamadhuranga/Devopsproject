@@ -2,58 +2,57 @@ pipeline {
     agent any
 
     environment {
-        AWS_ACCESS_KEY_ID     = credentials('aws_access_key_id')
-        AWS_SECRET_ACCESS_KEY = credentials('aws_secret_access_key')
-        TERRAFORM_DIR         = 'terraform'
-        SSH_KEY_PATH          = '~/.ssh/id_rsa'
+        DOCKERHUB_CREDS = 'dockerhub-creds'
+        DOCKERHUB_USER = 'sajithamaduranga2001@gmail.com'
+        FRONTEND_IMAGE = "${DOCKERHUB_USER}/devops_frontend_image:latest"
+        BACKEND_IMAGE  = "${DOCKERHUB_USER}/devops_backend_image:latest"
+        
+       
     }
 
     stages {
-        stage('Checkout Code') {
+        stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Sajithamadhuranga/Devopsproject.git'
+                checkout scm
             }
         }
 
-        stage('Terraform Init & Apply') {
+        stage('Build & Tag Images') {
             steps {
-                dir("${TERRAFORM_DIR}") {
-                    sh '''
-                    terraform init
-                    terraform plan -out=tfplan
-                    terraform apply -auto-approve tfplan
-                    '''
+                echo 'Building and tagging images...'
+                // Build with the tag we want to push
+                sh "docker build -t ${BACKEND_IMAGE} ./backend"
+                sh "docker build -t ${FRONTEND_IMAGE} ./frontend"
+            }
+        }
+
+        stage('Push Images to Docker Hub') {
+            steps {
+                // Use Jenkins credentials to login and push
+                withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDS}", usernameVariable: 'DH_USER', passwordVariable: 'DH_PASS')]) {
+                    sh 'echo $DH_PASS | docker login -u $DH_USER --password-stdin'
+                    sh "docker push ${BACKEND_IMAGE}"
+                    sh "docker push ${FRONTEND_IMAGE}"
+                    sh 'docker logout'
                 }
             }
         }
 
-        stage('Get EC2 Public IP') {
+        stage('Deploy Containers') {
             steps {
-                script {
-                    EC2_IP = sh(
-                        script: "terraform -chdir=${TERRAFORM_DIR} output -raw ec2_public_ip",
-                        returnStdout: true
-                    ).trim()
-                    echo "EC2 Public IP: ${EC2_IP}"
-                }
+                echo 'Cleaning up old containers...'
+                // This stops containers defined in your docker-compose.yml
+                sh 'docker-compose down || true'
+                sh 'docker rm -f mongo_c backend_c frontend_c || true'
+
+                echo 'Deploying to EC2 using Docker Compose...'
+                // Pull latest images from Docker Hub to ensure EC2 isn't using old cache
+                sh 'docker-compose pull'
+                // Start services in detached mode
+                sh 'docker-compose up -d'
             }
         }
 
-        stage('Deploy App to EC2') {
-            steps {
-                script {
-                    sh "./deploy.sh ${EC2_IP} ${SSH_KEY_PATH}"
-                }
-            }
-        }
-
-        stage('Verify Deployment') {
-            steps {
-                script {
-                    echo "You can now access the app at http://${EC2_IP}"
-                }
-            }
-        }
     }
 
     post {
