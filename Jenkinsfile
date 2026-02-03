@@ -32,6 +32,7 @@ pipeline {
             }
         }
 
+
         stage('Push Images to Docker Hub') {
             steps {
                 echo 'Logging into Docker Hub and pushing images...'
@@ -44,6 +45,7 @@ pipeline {
             }
         }
 
+
         stage('Deploy Containers') {
             steps {
                 script {
@@ -55,7 +57,7 @@ pipeline {
             }
         }
     }
-    
+
 
     post {
         success {
