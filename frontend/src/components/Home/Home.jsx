@@ -19,7 +19,7 @@ const Home = () => {
 
       
         <Link to="/signup" className="exploreButton">
-          Explore More <span className="arrow">≫</span>
+          Explore More details<span className="arrow">≫</span>
         </Link>
       </div>
     </div>
