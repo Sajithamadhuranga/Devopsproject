@@ -18,7 +18,7 @@ const Navbar = () => {
         <div className="navBar">
           <ul className="navList flex">
             <li className="navItem">
-              <Link to="/" className="navLink">Home</Link>
+              <Link to="/" className="navLink">Sajitha</Link>
             </li>
 
            
