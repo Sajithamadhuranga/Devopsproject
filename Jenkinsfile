@@ -77,11 +77,11 @@ pipeline {
     post {
 
         success {
-            echo "✅ Deployment Successful!"
+            echo " Deployment Successful!"
         }
 
         failure {
-            echo "❌ Deployment Failed!"
+            echo " Deployment Failed!"
         }
 
         always {
