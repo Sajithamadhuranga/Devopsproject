@@ -14,7 +14,7 @@ const Home = () => {
 
       <div className="heroContainer">
         <div className="heroSection">
-          <h1 className="heroTitle">Welcome To Spice Stock</h1>
+          <h1 className="heroTitle">Welcome </h1>
         </div>
 
       

@@ -265,7 +265,7 @@ const navigate = useNavigate();
       {/* Header Section */}
       <Navbar/>
       <div className="stock-header">
-        <h1> Spices </h1>
+        <h1>🌶️ Spices Stock</h1>
         <p>Discover our premium collection of authentic spices from around the world</p>
       </div>
 
