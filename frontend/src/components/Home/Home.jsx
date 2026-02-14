@@ -14,12 +14,12 @@ const Home = () => {
 
       <div className="heroContainer">
         <div className="heroSection">
-          <h1 className="heroTitle">Welcome </h1>
+          <h1 className="heroTitle">Welcome To Spice Stock</h1>
         </div>
 
       
         <Link to="/signup" className="exploreButton">
-          Explore More details<span className="arrow">≫</span>
+          Explore More <span className="arrow">≫</span>
         </Link>
       </div>
     </div>
