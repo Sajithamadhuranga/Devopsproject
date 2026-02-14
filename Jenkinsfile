@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_BUILDKIT = '1' 
+        DOCKER_BUILDKIT = '1'
         DOCKERHUB_CREDS = 'dockerhub-creds'
         DOCKERHUB_USER = 'sajithamaduranga'
         FRONTEND_IMAGE = "${DOCKERHUB_USER}/devops_frontend_image:latest"
@@ -10,64 +10,84 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
+
+        stage('Checkout Source Code') {
             steps {
+                echo "Cloning GitHub repository..."
                 checkout scm
             }
         }
 
-        // Parallel must be used as a top-level stage block like this:
-        stage('Build & Tag Images') {
+        stage('Build Docker Images') {
             parallel {
-                stage('Build Backend') {
+
+                stage('Build Backend Image') {
                     steps {
+                        echo "Building backend image..."
                         sh "docker build -t ${BACKEND_IMAGE} ./backend"
                     }
                 }
-                stage('Build Frontend') {
+
+                stage('Build Frontend Image') {
                     steps {
+                        echo "Building frontend image..."
                         sh "docker build -t ${FRONTEND_IMAGE} ./frontend"
                     }
                 }
+
             }
         }
-
 
         stage('Push Images to Docker Hub') {
             steps {
-                echo 'Logging into Docker Hub and pushing images...'
-                withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDS}", usernameVariable: 'DH_USER', passwordVariable: 'DH_PASS')]) {
-                    sh 'echo $DH_PASS | docker login -u $DH_USER --password-stdin'
-                    sh "docker push ${BACKEND_IMAGE}"
-                    sh "docker push ${FRONTEND_IMAGE}"
-                    sh 'docker logout'
+                echo "Logging into Docker Hub..."
+
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: "${DOCKERHUB_CREDS}",
+                        usernameVariable: 'DH_USER',
+                        passwordVariable: 'DH_PASS'
+                    )
+                ]) {
+
+                    sh '''
+                        echo $DH_PASS | docker login -u $DH_USER --password-stdin
+                        docker push ${BACKEND_IMAGE}
+                        docker push ${FRONTEND_IMAGE}
+                        docker logout
+                    '''
                 }
             }
         }
 
-
-        stage('Deploy Containers') {
+        stage('Deploy on EC2 using Docker Compose') {
             steps {
-                script {
-                    echo 'Cleaning up and deploying...'
-                    sh 'docker-compose down --remove-orphans || true'
-                    sh 'docker-compose pull'
-                    sh 'docker-compose up -d'
-                }
+                echo "Deploying containers..."
+
+                sh '''
+                    docker-compose down --remove-orphans || true
+                    docker-compose pull
+                    docker-compose up -d --force-recreate
+                '''
             }
         }
+
     }
 
-
     post {
+
         success {
-            echo "✅ Full Deployment Completed Successfully!"
+            echo "✅ Deployment Successful!"
         }
+
         failure {
-            echo "❌ Deployment Failed. Check the console logs."
+            echo "❌ Deployment Failed!"
         }
+
         always {
-            sh 'docker image prune -f || true'
+            echo "Cleaning unused images..."
+            sh 'docker image prune -af || true'
         }
+
     }
 }

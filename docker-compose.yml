@@ -1,23 +1,22 @@
+version: '3.8'
 
 services:
+
   frontend:
-    build:
-      context: ./frontend
-      args:
-        VITE_API_URL: /api/auth
+    image: sajithamaduranga/devops_frontend_image:latest
+    container_name: devops_frontend
     ports:
       - "3000:80"
     depends_on:
       - backend
     networks:
       - app-network
-    environment:
-      - VITE_API_URL=/api/auth
     restart: unless-stopped
 
+
   backend:
-    build:
-      context: ./backend
+    image: sajithamaduranga/devops_backend_image:latest
+    container_name: devops_backend
     ports:
       - "4000:4000"
     depends_on:
@@ -28,12 +27,13 @@ services:
       - MONGODB_URI=mongodb://admin:password@mongo:27017/docker-project?authSource=admin
       - PORT=4000
       - NODE_ENV=production
-      - JWT_SECRET=your-super-secret-jwt-key-change-in-production
+      - JWT_SECRET=your-super-secret-jwt-key
     restart: unless-stopped
+
 
   mongo:
     image: mongo:latest
-    restart: always
+    container_name: devops_mongo
     ports:
       - "27017:27017"
     networks:
@@ -44,11 +44,13 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=password
       - MONGO_INITDB_DATABASE=docker-project
-      - MONGO_DISABLE_AUTH=false
+    restart: unless-stopped
+
 
 networks:
   app-network:
     driver: bridge
+
 
 volumes:
   mongo_data:
