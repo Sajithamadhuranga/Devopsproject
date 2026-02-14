@@ -6,7 +6,7 @@ services:
       args:
         VITE_API_URL: /api/auth
     ports:
-      - "80:80"
+      - "3000:80"
     depends_on:
       - backend
     networks:
